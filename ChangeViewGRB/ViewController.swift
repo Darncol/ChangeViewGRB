@@ -19,7 +19,6 @@ final class ViewController: UIViewController {
     @IBOutlet weak var greenColorValueLabel: UILabel!
     @IBOutlet weak var blueColorValueLabel: UILabel!
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         updateColorDisplay()
@@ -34,7 +33,11 @@ final class ViewController: UIViewController {
         updateColorDisplay()
         updateColorValueLabels()
     }
-    
+}
+
+// MARK: Color Update Methods
+
+extension ViewController {
     private func updateColorDisplay() {
         colorDisplayView.backgroundColor = UIColor(
             red: CGFloat(redColorSlider.value),
