@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ViewController: UIViewController {
+final class SettingsViewController: UIViewController {
     
     @IBOutlet weak var colorDisplayView: UIView!
     
@@ -18,6 +18,9 @@ final class ViewController: UIViewController {
     @IBOutlet weak var redColorValueLabel: UILabel!
     @IBOutlet weak var greenColorValueLabel: UILabel!
     @IBOutlet weak var blueColorValueLabel: UILabel!
+    
+    var color: UIColor!
+    var delegate : MainViewControllerDelegate!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,14 +40,10 @@ final class ViewController: UIViewController {
 
 // MARK: Color Update Methods
 
-extension ViewController {
+extension SettingsViewController {
     private func updateColorDisplay() {
-        colorDisplayView.backgroundColor = UIColor(
-            red: CGFloat(redColorSlider.value),
-            green: CGFloat(greenColorSlider.value),
-            blue: CGFloat(blueColorSlider.value),
-            alpha: 1
-        )
+        guard let color = color else { return }
+        colorDisplayView.backgroundColor = color
     }
     
     private func updateColorValueLabels() {
