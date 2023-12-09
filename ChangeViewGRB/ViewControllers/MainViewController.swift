@@ -7,19 +7,16 @@
 
 import UIKit
 
-protocol MainViewControllerDelegate {
-    func updateColor()
+protocol MainViewControllerDelegate: AnyObject {
+    func updateColor(color: UIColor)
 }
 
-class MainViewController: UIViewController {
-    
-    @IBOutlet weak var mainView: UIView!
-    
+final class MainViewController: UIViewController {
     var viewColor: UIColor?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        updateMainBackgroundColor()
+        updateViewColorFromBackgroundColor()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -30,15 +27,20 @@ class MainViewController: UIViewController {
         settingsViewController.color = color
     }
     
-    private func updateMainBackgroundColor() {
-        guard let viewColor = mainView.backgroundColor else { return }
-        self.viewColor = viewColor
+    @IBAction func openSettingsViewController() {
+        updateViewColorFromBackgroundColor()
+        performSegue(withIdentifier: "ToSettingsVC", sender: nil)
     }
-
+    
+    private func updateViewColorFromBackgroundColor() {
+        guard let color = view.backgroundColor else { return }
+        self.viewColor = color
+    }
 }
 
+// MARK: - SettingsViewControllerDelegate
 extension MainViewController: MainViewControllerDelegate {
-    func updateColor() {
-        updateMainBackgroundColor()
+    func updateColor(color: UIColor) {
+        view.backgroundColor = color
     }
 }

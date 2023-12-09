@@ -20,16 +20,23 @@ final class SettingsViewController: UIViewController {
     @IBOutlet weak var blueColorValueLabel: UILabel!
     
     var color: UIColor!
-    var delegate : MainViewControllerDelegate!
+    
+    weak var delegate : MainViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        updateColorDisplay()
+        initializeSlidersWithColor()
         updateColorValueLabels()
     }
     
     override func viewWillLayoutSubviews() {
         colorDisplayView.layer.cornerRadius = colorDisplayView.frame.height / 2
+    }
+    
+    @IBAction func saveButtonTapped() {
+        guard let backgroundColor = colorDisplayView.backgroundColor else { return }
+        delegate?.updateColor(color: backgroundColor)
+        dismiss(animated: true)
     }
     
     @IBAction func sliderValueChanged() {
@@ -39,21 +46,40 @@ final class SettingsViewController: UIViewController {
 }
 
 // MARK: Color Update Methods
-
-extension SettingsViewController {
-    private func updateColorDisplay() {
-        guard let color = color else { return }
-        colorDisplayView.backgroundColor = color
+private extension SettingsViewController {
+    func updateColorDisplay() {
+        colorDisplayView.backgroundColor = UIColor(
+            red: CGFloat(redColorSlider.value),
+            green: CGFloat(greenColorSlider.value),
+            blue: CGFloat(blueColorSlider.value),
+            alpha: 1
+        )
     }
     
-    private func updateColorValueLabels() {
+    func updateColorValueLabels() {
         redColorValueLabel.text = formatSliderValue(redColorSlider.value)
         greenColorValueLabel.text = formatSliderValue(greenColorSlider.value)
         blueColorValueLabel.text = formatSliderValue(blueColorSlider.value)
     }
     
-    private func formatSliderValue(_ value: Float) -> String {
+    func formatSliderValue(_ value: Float) -> String {
         String(format: "%.2f", value)
     }
+    
+    func initializeSlidersWithColor() {
+        guard let color = color else { return }
+        colorDisplayView.backgroundColor = color
+        
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        
+        color.getRed(&red, green: &green, blue: &blue, alpha: nil)
+        
+        redColorSlider.value = Float(red)
+        greenColorSlider.value = Float(green)
+        blueColorSlider.value = Float(blue)
+    }
+    
 }
 
