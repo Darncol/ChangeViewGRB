@@ -80,6 +80,5 @@ private extension SettingsViewController {
         greenColorSlider.value = Float(green)
         blueColorSlider.value = Float(blue)
     }
-    
 }
 
