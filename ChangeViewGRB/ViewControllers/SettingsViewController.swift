@@ -80,18 +80,13 @@ private extension SettingsViewController {
     }
     
     func initializeSlidersWithColor() {
-        guard let color = color else { return }
         colorDisplayView.backgroundColor = color
         
-        var red: CGFloat = 0
-        var green: CGFloat = 0
-        var blue: CGFloat = 0
+        var ciColor = CIColor(color: color)
         
-        color.getRed(&red, green: &green, blue: &blue, alpha: nil)
-        
-        redColorSlider.value = Float(red)
-        greenColorSlider.value = Float(green)
-        blueColorSlider.value = Float(blue)
+        redColorSlider.value = Float(ciColor.red)
+        greenColorSlider.value = Float(ciColor.green)
+        blueColorSlider.value = Float(ciColor.blue)
     }
 }
 
