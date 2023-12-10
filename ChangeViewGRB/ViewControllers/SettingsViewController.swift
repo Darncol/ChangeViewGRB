@@ -20,7 +20,7 @@ final class SettingsViewController: UIViewController {
     
     var color: UIColor!
     
-    weak var delegate : MainViewControllerDelegate?
+    weak var delegate : SettingsViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -106,11 +106,11 @@ extension SettingsViewController: UITextFieldDelegate {
         
         switch textField.tag {
         case 0:
-            redColorSlider.value = Float(textField.text ?? "0") ?? 0
+            redColorSlider.setValue(number, animated: true)
         case 1:
-            greenColorSlider.value = Float(textField.text ?? "0") ?? 0
+            greenColorSlider.setValue(number, animated: true)
         default:
-            blueColorSlider.value = Float(textField.text ?? "0") ?? 0
+            blueColorSlider.setValue(number, animated: true)
         }
         updateColorDisplay()
     }

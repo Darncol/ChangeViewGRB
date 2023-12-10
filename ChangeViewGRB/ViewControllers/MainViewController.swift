@@ -7,39 +7,29 @@
 
 import UIKit
 
-protocol MainViewControllerDelegate: AnyObject {
+protocol SettingsViewControllerDelegate: AnyObject {
     func updateColor(color: UIColor)
 }
 
 final class MainViewController: UIViewController {
-    var viewColor: UIColor?
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        updateViewColorFromBackgroundColor()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let settingsViewController = segue.destination as? SettingsViewController else { return }
-        guard let color = viewColor else { return }
         
         settingsViewController.delegate = self
-        settingsViewController.color = color
+        settingsViewController.color = view.backgroundColor
     }
     
     @IBAction func openSettingsViewController() {
-        updateViewColorFromBackgroundColor()
         performSegue(withIdentifier: "ToSettingsVC", sender: nil)
-    }
-    
-    private func updateViewColorFromBackgroundColor() {
-        guard let color = view.backgroundColor else { return }
-        self.viewColor = color
     }
 }
 
 // MARK: - Delegate
-extension MainViewController: MainViewControllerDelegate {
+extension MainViewController: SettingsViewControllerDelegate {
     func updateColor(color: UIColor) {
         view.backgroundColor = color
     }
