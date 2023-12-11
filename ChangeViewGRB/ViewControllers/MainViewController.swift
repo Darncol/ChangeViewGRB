@@ -22,10 +22,6 @@ final class MainViewController: UIViewController {
         settingsViewController.delegate = self
         settingsViewController.color = view.backgroundColor
     }
-    
-    @IBAction func openSettingsViewController() {
-        performSegue(withIdentifier: "ToSettingsVC", sender: nil)
-    }
 }
 
 // MARK: - Delegate

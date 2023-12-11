@@ -18,6 +18,11 @@ final class SettingsViewController: UIViewController {
     @IBOutlet weak var greenTextFiled: UITextField!
     @IBOutlet weak var blueTextFiled: UITextField!
     
+    @IBOutlet weak var redLabel: UILabel!
+    @IBOutlet weak var greenLabel: UILabel!
+    @IBOutlet weak var blueLabel: UILabel!
+    
+    
     var color: UIColor!
     
     weak var delegate : SettingsViewControllerDelegate?
@@ -28,7 +33,6 @@ final class SettingsViewController: UIViewController {
         initializeSlidersWithColor()
         updateColorValueTextFields()
         registerForKeyboardEvents()
-        signTextFiledsForDelegate()
     }
     
     deinit {
@@ -50,12 +54,6 @@ final class SettingsViewController: UIViewController {
         updateColorDisplay()
         updateColorValueTextFields()
     }
-    
-    private func signTextFiledsForDelegate() {
-        redTextField.delegate = self
-        greenTextFiled.delegate = self
-        blueTextFiled.delegate = self
-    }
 }
 
 // MARK: Color Update Methods
@@ -69,10 +67,14 @@ private extension SettingsViewController {
         )
     }
     
-    func updateColorValueTextFields() {
+    func updateColorValueTextFields(sliders: UISlider...) {
         redTextField.text = formatSliderValue(redColorSlider.value)
         greenTextFiled.text = formatSliderValue(greenColorSlider.value)
         blueTextFiled.text = formatSliderValue(blueColorSlider.value)
+        
+        redLabel.text = redTextField.text
+        greenLabel.text = greenTextFiled.text
+        blueLabel.text = blueTextFiled.text
     }
     
     func formatSliderValue(_ value: Float) -> String {
@@ -82,7 +84,7 @@ private extension SettingsViewController {
     func initializeSlidersWithColor() {
         colorDisplayView.backgroundColor = color
         
-        var ciColor = CIColor(color: color)
+        let ciColor = CIColor(color: color)
         
         redColorSlider.value = Float(ciColor.red)
         greenColorSlider.value = Float(ciColor.green)
@@ -96,18 +98,37 @@ extension SettingsViewController: UITextFieldDelegate {
         guard let text = textField.text,
               let number = Float(text),
               (0.0...1.0).contains(number) else {
-                  return
-              }
+            showAlert(
+                title: "Wrong format",
+                message: "Please enter value from 0.0 to 1.0"
+            )
+            textField.text = getOldValue(from: textField.tag)
+            return
+        }
         
         switch textField.tag {
         case 0:
             redColorSlider.setValue(number, animated: true)
+            redLabel.text = number.formatted()
         case 1:
             greenColorSlider.setValue(number, animated: true)
+            greenLabel.text = number.formatted()
         default:
             blueColorSlider.setValue(number, animated: true)
+            blueLabel.text = number.formatted()
         }
         updateColorDisplay()
+    }
+    
+    private func getOldValue(from label: Int) -> String {
+        switch label {
+        case 0:
+            redLabel.text ?? "0"
+        case 1:
+            greenLabel.text ?? "0"
+        default:
+            blueLabel.text ?? "0"
+        }
     }
 }
 
@@ -117,14 +138,14 @@ extension SettingsViewController {
         let doneToolbar: UIToolbar = UIToolbar()
         
         doneToolbar.barStyle = .default
-
+        
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let done: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(self.doneButtonAction))
-
+        
         let items = [flexSpace, done]
         doneToolbar.items = items
         doneToolbar.sizeToFit()
-
+        
         redTextField.inputAccessoryView = doneToolbar
         greenTextFiled.inputAccessoryView = doneToolbar
         blueTextFiled.inputAccessoryView = doneToolbar
@@ -154,7 +175,7 @@ extension SettingsViewController {
             }
         }
     }
-
+    
     @objc func keyboardWillHide(notification: NSNotification) {
         if (
             (
@@ -166,8 +187,19 @@ extension SettingsViewController {
             }
         }
     }
-
+    
     @objc func doneButtonAction() {
         view.endEditing(true)
+    }
+}
+
+extension SettingsViewController {
+    func showAlert(title: String, message: String, closure: (() -> Void)? = nil) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default) {_ in
+            closure?()
+        }
+        alert.addAction(okAction)
+        present(alert, animated: true)
     }
 }
